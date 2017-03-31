@@ -1,0 +1,10 @@
+services:
+    mdespeuilles.mail:
+        class: Mdespeuilles\MailBundle\Services\Email
+        arguments: [ '@service_container' ]
+
+    mdespeuilles.entity.email:
+        class: Doctrine\ORM\EntityRepository
+        factory: ["@doctrine.orm.entity_manager", getRepository]
+        arguments:
+            - Mdespeuilles\MailBundle\Entity\Email

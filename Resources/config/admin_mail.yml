@@ -1,0 +1,15 @@
+easy_admin:
+    design:
+        menu:
+            - label: 'Emails'
+              icon: 'product-hunt'
+              entity: 'Email'
+    entities:
+        Email:
+            class: Mdespeuilles\MailBundle\Entity\Email
+            form:
+                fields:
+                    - { type: 'group', css_class: 'col-sm-12', label: 'Informations basiques' }
+                    - { property: 'machineName', label: 'Nom machine' }
+                    - { property: 'subject', label: 'Sujet' }
+                    - { property: 'body', type: 'ckeditor', help: 'Liste des tokens disponibles : <br />- [mail]<br />- [password]<br /> - [webform_data]' }
