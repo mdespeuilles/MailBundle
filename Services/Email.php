@@ -8,6 +8,7 @@
 
 namespace Mdespeuilles\MailBundle\Services;
 
+use PHPHtmlParser\Dom;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Email {
@@ -45,8 +46,9 @@ class Email {
     
             $body = str_replace("[webform_data]", $values, $body);
         }
-    
-    
+        
+        $body = $this->convertImgSrc($body);
+        
         $message = \Swift_Message::newInstance()
             ->setFrom($from)
             ->setTo($to)
@@ -54,5 +56,37 @@ class Email {
             ->setBody($body, 'text/html');
         //->attach(\Swift_Attachment::fromPath($invoiceFile));
         $this->container->get('mailer')->send($message);
+    }
+    
+    /**
+     * Drupal function to check if an url is absolute.
+     *
+     * @param $url
+     * @return bool
+     */
+    private function is_absolute($url)
+    {
+        $pattern = "/^(?:ftp|https?|feed):\/\/(?:(?:(?:[\w\.\-\+!$&'\(\)*\+,;=]|%[0-9a-f]{2})+:)*(?:[\w\.\-\+%!$&'\(\)*\+,;=]|%[0-9a-f]{2})+@)?(?:(?:[a-z0-9\-\.]|%[0-9a-f]{2})+|(?:\[(?:[0-9a-f]{0,4}:)*(?:[0-9a-f]{0,4})\]))(?::[0-9]+)?(?:[\/|\?](?:[\w#!:\.\?\+=&@$'~*,;\/\(\)\[\]\-]|%[0-9a-f]{2})*)?$/xi";
+        return (bool) preg_match($pattern, $url);
+    }
+    
+    private function convertImgSrc($body) {
+        $dom = new Dom();
+        $dom->load($body);
+        $imgs = $dom->find('img');
+    
+        $countImg = count($dom->find('img'));
+    
+        for ($i = 0; $i <= $countImg; $i++) {
+            $src = $dom->find('img')[0]->getAttribute('src');
+            if (!$this->is_absolute($src)) {
+                $schemeAndHttpHost = $this->container->get('request_stack')->getCurrentRequest()->getSchemeAndHttpHost();
+            
+                $tag = $dom->find('img')[0]->getTag();
+                $tag->setAttribute('src', $schemeAndHttpHost . $src);
+            }
+        }
+        
+        return $dom;
     }
 }
