@@ -78,12 +78,14 @@ class Email {
         $countImg = count($dom->find('img'));
     
         for ($i = 0; $i <= $countImg; $i++) {
-            $src = $dom->find('img')[0]->getAttribute('src');
-            if (!$this->is_absolute($src)) {
-                $schemeAndHttpHost = $this->container->get('request_stack')->getCurrentRequest()->getSchemeAndHttpHost();
-            
-                $tag = $dom->find('img')[0]->getTag();
-                $tag->setAttribute('src', $schemeAndHttpHost . $src);
+            if (isset($dom->find('img')[0])) {
+                $src = $dom->find('img')[0]->getAttribute('src');
+                if (!$this->is_absolute($src)) {
+                    $schemeAndHttpHost = $this->container->get('request_stack')->getCurrentRequest()->getSchemeAndHttpHost();
+        
+                    $tag = $dom->find('img')[0]->getTag();
+                    $tag->setAttribute('src', $schemeAndHttpHost . $src);
+                }
             }
         }
         
