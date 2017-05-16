@@ -29,15 +29,13 @@ class Email {
         ]);
     
         $body = $email->getBody();
-        
-        if (isset($data['mail'])) {
-            $body = str_replace("[mail]", $data['mail'], $body);
+
+        foreach ($data as $key => $value) {
+            if ($key != 'webform_data') {
+                $body = str_replace("[".$key."]", $value, $body);
+            }
         }
-    
-        if (isset($data['password'])) {
-            $body = str_replace("[password]", $data['password'], $body);
-        }
-        
+
         if (isset($data['webform_data'])) {
             $values = "<br />";
             foreach ($data['webform_data'] as $key => $value) {
