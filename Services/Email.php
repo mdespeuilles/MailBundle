@@ -52,7 +52,11 @@ class Email {
             ->setTo($to)
             ->setSubject($email->getSubject())
             ->setBody($body, 'text/html');
-        //->attach(\Swift_Attachment::fromPath($invoiceFile));
+
+        if (isset($data['attachment'])) {
+            $message->attach(\Swift_Attachment::fromPath($data['attachment']));
+        }
+
         $this->container->get('mailer')->send($message);
     }
     
