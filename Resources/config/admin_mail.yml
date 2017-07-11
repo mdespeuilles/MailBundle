@@ -13,3 +13,4 @@ easy_admin:
                     - { property: 'machineName', label: 'Nom machine' }
                     - { property: 'subject', label: 'Sujet' }
                     - { property: 'body', type: 'ckeditor', help: 'Liste des tokens disponibles : <br />- [mail]<br />- [password]<br /> - [webform_data]' }
+                    - { property: 'attachmentFile', type: 'vich_file', label: 'Pièce jointe' }

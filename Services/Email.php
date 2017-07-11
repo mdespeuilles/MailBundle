@@ -23,7 +23,7 @@ class Email {
     }
     
     public function sendMail($mail, $from, $to, $data) {
-        /* @var Email $email */
+        /* @var \Mdespeuilles\MailBundle\Entity\Email $email */
         $email = $this->container->get('mdespeuilles.entity.email')->findOneBy([
             'machineName' => $mail
         ]);
@@ -55,6 +55,12 @@ class Email {
 
         if (isset($data['attachment'])) {
             $message->attach(\Swift_Attachment::fromPath($data['attachment']));
+        }
+
+        if ($email->getAttachmentFile()) {
+            $helper = $this->container->get('vich_uploader.templating.helper.uploader_helper');
+            $path = $this->container->get('kernel')->getRootDir() . '/../web' . $helper->asset($email, 'attachmentFile');
+            $message->attach(\Swift_Attachment::fromPath($path));
         }
 
         $this->container->get('mailer')->send($message);

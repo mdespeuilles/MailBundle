@@ -3,12 +3,15 @@
 namespace Mdespeuilles\MailBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * Email
  *
  * @ORM\Table(name="email")
  * @ORM\Entity(repositoryClass="Mdespeuilles\MailBundle\Repository\EmailRepository")
+ * @Vich\Uploadable()
  */
 class Email
 {
@@ -41,6 +44,31 @@ class Email
      * @ORM\Column(name="body", type="text")
      */
     private $body;
+
+
+    /**
+     * NOTE: This is not a mapped field of entity metadata, just a simple property.
+     *
+     * @Vich\UploadableField(mapping="file_fields", fileNameProperty="attachmentName")
+     *
+     * @var File
+     */
+    private $attachmentFile;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     *
+     * @var string
+     */
+    private $attachmentName;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @var \DateTime
+     */
+    private $attachmentUpdatedAt;
+
 
     public function __toString()
     {
@@ -128,6 +156,58 @@ class Email
     public function getBody()
     {
         return $this->body;
+    }
+
+    public function setAttachmentFile(File $attachment = null)
+    {
+        $this->attachmentFile = $attachment;
+
+        if ($attachment) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->attachmentUpdatedAt = new \DateTime('now');
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return File
+     */
+    public function getAttachmentFile()
+    {
+        return $this->attachmentFile;
+    }
+
+    public function setAttachmentName($attachmentName)
+    {
+        $this->attachmentName = $attachmentName;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAttachmentName()
+    {
+        return $this->attachmentName;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getAttachmentUpdatedAt()
+    {
+        return $this->attachmentUpdatedAt;
+    }
+
+    /**
+     * @param \DateTime $attachmentUpdatedAt
+     */
+    public function setAttachmentUpdatedAt($attachmentUpdatedAt)
+    {
+        $this->attachmentUpdatedAt = $attachmentUpdatedAt;
     }
 }
 
