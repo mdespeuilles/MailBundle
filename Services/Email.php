@@ -22,7 +22,7 @@ class Email {
         $this->container = $containerInterface;
     }
     
-    public function sendMail($mail, $from, $to, $data) {
+    public function sendMail($mail, $from, $to, $data, $senderName=null) {
         /* @var \Mdespeuilles\MailBundle\Entity\Email $email */
         $email = $this->container->get('mdespeuilles.entity.email')->findOneBy([
             'machineName' => $mail
@@ -46,6 +46,12 @@ class Email {
         }
         
         $body = $this->convertImgSrc($body);
+
+        if ($senderName) {
+            $from = [
+                $from => $senderName
+            ];
+        }
         
         $message = \Swift_Message::newInstance()
             ->setFrom($from)
