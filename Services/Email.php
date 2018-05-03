@@ -22,7 +22,7 @@ class Email {
         $this->container = $containerInterface;
     }
     
-    public function sendMail($mail, $from, $to, $data, $senderName=null) {
+    public function sendMail($mail, $from, $to, $data, $senderName = null, $replyTo = null) {
         /* @var \Mdespeuilles\MailBundle\Entity\Email $email */
         $email = $this->container->get('mdespeuilles.entity.email')->findOneBy([
             'machineName' => $mail
@@ -58,6 +58,10 @@ class Email {
             ->setTo($to)
             ->setSubject($email->getSubject())
             ->setBody($body, 'text/html');
+
+        if ($replyTo) {
+            $message->setReplyTo($replyTo);
+        }
 
         if (isset($data['attachment'])) {
             $message->attach(\Swift_Attachment::fromPath($data['attachment']));
